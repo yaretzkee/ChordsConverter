@@ -1,0 +1,5 @@
+.vscode/
+src/tempCodeRunnerFile.py
+src/__pychache__/
+*.pyc
+img/unused/
