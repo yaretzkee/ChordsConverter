@@ -1,9 +1,13 @@
+import sys
+sys.path.insert(0, '..')
 import re
-from regex_patterns import *
+
 from pprint import pprint
 from string import Template
-from chord import Chord
-from examples import Example
+
+from src.chord import Chord
+from src.examples import Example
+from src.regex_patterns import *
  
 
 class Song:

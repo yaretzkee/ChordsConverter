@@ -23,5 +23,5 @@ class Designer:
 if __name__ == '__main__':
     uic = Designer()
     uic.build('uic','main_window.ui', 'ui_mainwindow.py')
-    uic.build('rcc', '../img/icons.qrc', 'icons_rc.py')
+    uic.build('rcc', '../img/icons.qrc', '../src/icons_rc.py')
     #uic.build()

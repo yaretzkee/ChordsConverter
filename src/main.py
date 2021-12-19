@@ -1,20 +1,22 @@
-import sys
+import sys, os
 sys.path.insert(0, '..')
 import logging as log
 import pathlib
 
 from PySide6 import QtGui
-from gui import Designer
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PySide6.QtCore import Qt, QFile
-from time import sleep
-from examples import Example
-from song import Song
+
+from src.gui import Designer
+from src.examples import Example
+from src.song import Song
+
+os.chdir(pathlib.Path(__file__).parent)
 
 designer = Designer()
-is_uic = designer.build('uic','main_window.ui', 'ui_mainwindow.py')
-is_rcc = designer.build('rcc', '../img/icons.qrc', 'icons_rc.py')
-from ui_mainwindow import Ui_MainWindow
+is_uic = designer.build('uic','../src/main_window.ui', '../src/ui_mainwindow.py')
+is_rcc = designer.build('rcc', '../img/icons.qrc', '../src/icons_rc.py')
+from src.ui_mainwindow import Ui_MainWindow
 
 log.basicConfig(
     level=log.DEBUG,
@@ -25,9 +27,7 @@ class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super(MainWindow, self).__init__()
         self.is_init_completed = False
-
         self.ui = Ui_MainWindow()
-
         self.ui.setupUi(self)
         self.example = Example()
 
@@ -227,7 +227,9 @@ def main():
     window.show()
     
     QtGui.QFontDatabase.addApplicationFont("RobotoMono-VariableFont_wght.ttf")
-    with open(r"..\res\style.qss", "r") as f:
+
+    res = pathlib.Path('../res/style.qss')
+    with open(res, "r") as f:
         _style = f.read()
         app.setStyleSheet(_style)
 

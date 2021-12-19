@@ -1,6 +1,8 @@
+import sys
+sys.path.insert(0, '..')
 import logging as log
 import re
-from regex_patterns import *
+from src.regex_patterns import *
 
 log.basicConfig(
     level=log.DEBUG,
@@ -22,7 +24,6 @@ class Chord:
         self.chord_fractions = [self.root, self.semitone, self.minor, self.ext1, self.ext2, self.ext3, self.ext4, self.ext5]
         s = [f for f in self.chord_fractions if f]
         return ''.join([str(g) for g in s])
-    
     
     def guess_input_mode(self):
         g_conditions = [self.root.islower(), self.root.upper() == 'H', self.semitone in ['is', 'es'], self.ext1 in ['0', '2', '4'], self.ext3=='+']
@@ -144,12 +145,9 @@ def test():
 
     for crd in chords:
         c = Chord(crd)
-        #print(c.chord_fractions)
         print(f'{crd}\t-->\t{c}\t{c.input_mode}\t{c._to_hk()}\t{c.semitone}')
-        #print(c.input_mode)
+
 if __name__ == '__main__':
     test()
-    #c = Chord('Fis7')
-    #c._decode()
-    #print(c)
+
     
