@@ -166,7 +166,6 @@ class Ui_MainWindow(object):
 
         self.rb_out_latex_songs = QRadioButton(self.groupbox_out_format)
         self.rb_out_latex_songs.setObjectName(u"rb_out_latex_songs")
-        self.rb_out_latex_songs.setEnabled(False)
 
         self.gridLayout_2.addWidget(self.rb_out_latex_songs, 3, 0, 1, 1)
 

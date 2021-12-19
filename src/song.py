@@ -268,6 +268,7 @@ class Song:
         return txt
 
     def _to_leadsheets(self, chords_above=False):
+        
         TEMPLATE_ENV_BEGIN = Template('\\begin{$env}\n')
         TEMPLATE_ENV_END = Template('\\end{$env}\n')
         TEMPLATE_SONG_BEGIN= Template('\\begin{song}{title={$title},band={$artist}$other_properties}\n')
@@ -308,7 +309,41 @@ class Song:
         return txt
 
     def _to_songs(self, chords_above=False):
-        return 'convertion to UG format not implemented'
+        TEMPLATE_ENV_BEGIN = Template('\\begin$env\n')
+        TEMPLATE_ENV_END = Template('\\end$env\n')
+        TEMPLATE_SONG_BEGIN= Template('\\beginsong{title=$title}[by=$artist]\n')
+        
+        txt = TEMPLATE_SONG_BEGIN.safe_substitute(title=self.title, artist=self.band)
+        if hasattr(self, 'capo') and self.capo:
+            txt += '\capo{' + self.capo + '}\n'
+
+        
+        prev_mode = 'default'
+        for line in self.song_body:
+            line["chords"] = [c._to_tex_songs() for c in line["chords"]]
+            line['pos_crd_pairs'] = [(pcp[0], pcp[1]._to_tex_songs()) for pcp in line['pos_crd_pairs']]
+            
+            line['mode'] = 'tabs' if line['mode'] == 'tab' else line['mode']
+            if prev_mode != line['mode']:
+                if prev_mode != 'default':
+                    txt += TEMPLATE_ENV_END.safe_substitute(env=prev_mode)
+                
+                txt += TEMPLATE_ENV_BEGIN.safe_substitute(env=line['mode'])
+                prev_mode = line['mode']
+
+            
+            crds = ' '.join([self.wrap_chord(c,'songs') for c in line['chords']])
+            
+            if chords_above:
+                txt += self.merge_chords_and_lyrics(lyricsline=line['lyrics'],pairs=line['pos_crd_pairs'], chord_format='songs')
+                txt += '\n'
+            else:
+                txt += f'{line["lyrics"]} \\tab{crds}\n'
+
+        txt += TEMPLATE_ENV_END.safe_substitute(env=prev_mode)
+        txt += '\\endsong'
+
+        return txt
 
     def _to_koliba(self, *args, **kwargs):
 
@@ -317,7 +352,6 @@ class Song:
         if self.capo and int(self.capo) != 0:
             sng += f'#capo Capo {self.number2roman(int(self.capo))}\n'
         
-        #sng += '\n'
         prev_mode='default'
         for line in self.song_body:
             line["chords"] = [c._to_hk() for c in line["chords"]]
@@ -373,13 +407,14 @@ class Song:
             output = self._to_leadsheets(chords_above=chords_above)
 
         elif to_format == 3: 
-            output = self._to_koliba(chords_above=chords_above)
+            output = self._to_songs(chords_above=chords_above)
         
         elif to_format == 4: 
             output = self._to_koliba(chords_above=chords_above)
 
         else: 
             output = 'ERROR! unknown option'
+
         return output
 
     def wrap_chord(self, crd, f):
@@ -409,20 +444,10 @@ class Song:
         
         return ''.join(ll)
 
-    def merge_chords_and_lyrics2(self, chordline, lyricsline, chord_format=None):
-        '''chord_format = leadsheets|leadsheets_above|chopro|songs'''
-        pairs = [(m.start(), m.group(0)) for m in re.finditer(REGEX_UG_CHORD, chordline)][::-1]
-
-        ll = list(lyricsline)
-        for crd in pairs:
-            ll.insert(crd[0], self.wrap_chord(crd=crd[1], f=chord_format))
-
-        return ''.join(ll)
-
-
 if __name__ == '__main__':
     e = Example()
-    print(e.chopro)
+    
     s = Song(e.chopro, input_format=1)
     print(s.title, s.band)
-
+    txt = s.convert(3)
+    print(txt)

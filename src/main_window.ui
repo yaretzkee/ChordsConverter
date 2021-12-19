@@ -171,9 +171,6 @@
        </item>
        <item row="3" column="0">
         <widget class="QRadioButton" name="rb_out_latex_songs">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="text">
           <string>LaTeX (songs)</string>
          </property>

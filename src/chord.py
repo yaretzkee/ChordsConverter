@@ -100,6 +100,12 @@ class Chord:
         self.minor = 'mi' if self.minor == 'm' else ''
         return self._merge_fractions()
 
+    def _to_tex_songs(self):
+        if self.semitone == 'b':
+            self.semitone = '&'
+        
+        return self._merge_fractions()
+
     def _to_chopro(self):
         '''once self._decode is deployed, chord elements are stored in .chopro format (w/o brackets)'''
         return self._merge_fractions()

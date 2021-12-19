@@ -179,7 +179,7 @@ Szukam szukania mi trzeba...
 [C] [Cmaj7] [Am]
 
 {start_of_verse}
-[C]Już wyrosłem z tych podchodów [F]nastoletnich, [C]niedojrzałych [G/B] [Am]       
+[C]Już wyrosłem z [Bb]tych podchodów [F]nastoletnich, [C]niedojrzałych [G/B] [Am]       
 [Am]Z romantycznych za[Em]chodów i z uda[F]wania nieś[G]miałych
 [F]Nie sięgam gdzie wzrok nie sięga 
 Bo od [C]wzroku krótsza [Am]ręka
