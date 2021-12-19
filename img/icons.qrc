@@ -1,0 +1,21 @@
+<RCC>
+  <qresource prefix="actions">
+    <file>help.png</file>
+    <file>folder_open.png</file>
+    <file>icon-quit.png</file>
+    <file>dialog-ok.png</file>
+    <file>media-floppy.png</file>
+    <file>media-playback-start.png</file>
+    <file>dialog-error.png</file>
+  </qresource>
+  <qresource prefix="other"/>
+  <qresource prefix="logos">
+    <file>app_icon.png</file>
+  </qresource>
+  <qresource prefix="examples">
+    <file>application-ug.png</file>
+    <file>application-x-tex.png</file>
+    <file>application-chopro.png</file>
+    <file>application-hk.png</file>
+  </qresource>
+</RCC>

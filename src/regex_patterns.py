@@ -1,5 +1,5 @@
 import re
-REGEX_UG_ENVIRONMENTS = re.compile(r'^\[(Whistle|Intro|Verse|Chorus|Pre-Chorus|Intro|Outro|Bridge|Interlude|Break)\s?(\d)?\]$', re.IGNORECASE)
+REGEX_UG_ENVIRONMENTS = re.compile(r'^\[(Whistle|Intro|Verse|Chorus|Pre-Chorus|Intro|Solo|Outro|Bridge|Interlude|Break)\s?(\d)?\]$', re.IGNORECASE)
 REGEX_UG_CHORD = re.compile(r'(?<!\S)(([A-G]){1}(#|b)?(m?)?(?!aj)(\d)?(\/\d\-?)?(\+\-|sus|add|aug|maj|dim)?((#|b)?\d{1,2})?([\\\/][A-G]{1}(#|b)?)?)(?!\S)')
 REGEX_UG_LYRICS = re.compile(r'\w')
 

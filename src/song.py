@@ -201,8 +201,7 @@ class Song:
                     line_data = {'mode':env, 'lyrics':lyrics, 'chords': chords, 'pos_crd_pairs': pairs}
                 
                     self.song_body.append(line_data)
-            
-    
+
     def _to_ug(self):
         pass
     

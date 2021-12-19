@@ -1,13 +1,20 @@
-from ui_mainwindow import Ui_MainWindow
 import sys
+sys.path.insert(0, '..')
 import logging as log
 import pathlib
-from gui import UIC
+
+from PySide6 import QtGui
+from gui import Designer
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PySide6.QtCore import Qt, QFile
+from time import sleep
 from examples import Example
 from song import Song
-uic = UIC('main_window.ui', 'ui_mainwindow.py')
-uic.compile()
+
+designer = Designer()
+is_uic = designer.build('uic','main_window.ui', 'ui_mainwindow.py')
+is_rcc = designer.build('rcc', '../img/icons.qrc', 'icons_rc.py')
+from ui_mainwindow import Ui_MainWindow
 
 log.basicConfig(
     level=log.DEBUG,
@@ -18,11 +25,20 @@ class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super(MainWindow, self).__init__()
         self.is_init_completed = False
+
         self.ui = Ui_MainWindow()
+
         self.ui.setupUi(self)
         self.example = Example()
 
         # ------ EVENT Connections --------------------------------------------
+        self._connect_events()
+        # --------------------------------------------------------------------
+        self._init_states()
+        self.is_init_completed = True
+        log.info('App __init__ COMPLETED!')
+
+    def _connect_events(self):
         self.ui.text_in.textChanged.connect(self.onChange_text_in)
 
         self.ui.actionConvert.triggered.connect(self.onClickMenuConvert)
@@ -37,21 +53,15 @@ class MainWindow(QMainWindow):
 
         self.ui.rb_in_ug.clicked.connect(self.__read_input_format)
         self.ui.rb_in_chopro.clicked.connect(self.__read_input_format)
-        self.ui.rb_in_latex_leadsheets.clicked.connect(
-            self.__read_input_format)
+        self.ui.rb_in_latex_leadsheets.clicked.connect(self.__read_input_format)
         self.ui.rb_in_latex_songs.clicked.connect(self.__read_input_format)
         self.ui.rb_in_hk.clicked.connect(self.__read_input_format)
 
         self.ui.rb_out_ug.clicked.connect(self.__read_output_format)
         self.ui.rb_out_chopro.clicked.connect(self.__read_output_format)
-        self.ui.rb_out_latex_leadsheets.clicked.connect(
-            self.__read_output_format)
+        self.ui.rb_out_latex_leadsheets.clicked.connect(self.__read_output_format)
         self.ui.rb_out_latex_songs.clicked.connect(self.__read_output_format)
         self.ui.rb_out_hk.clicked.connect(self.__read_output_format)
-        # --------------------------------------------------------------------
-        self._init_states()
-        self.is_init_completed = True
-        log.info('App __init__ COMPLETED!')
 
     def _init_states(self):
         self.input_format = 0
@@ -66,6 +76,7 @@ class MainWindow(QMainWindow):
         with open(file=fname[0], mode='r', encoding='utf-8') as f:
             data = f.read()
         
+        self.ui.text_in.setPlainText(data)
 
         if ext == '.tex':
             self.__selectInputRadioByIndex(2)
@@ -77,8 +88,6 @@ class MainWindow(QMainWindow):
             self.__selectInputRadioByIndex(0)
 
         log.debug(f'openinig file: {fname[0]}')
-        print(ext)
-
 
     def saveAsFile(self):
         formats = ['Ultimate Guitar (*.txt)', 'ChoPro (*.chopro', 'LaTeX (*.tex)','LaTeX sOngs (*.tex)' 'HK (*.sng)']
@@ -120,7 +129,7 @@ class MainWindow(QMainWindow):
 
     def load_example(self, song_format=None):
         if song_format != None:
-            self.ui.text_in.setText(self.example.frm(song_format))
+            self.ui.text_in.setPlainText(self.example.frm(song_format))
 
             log.debug('')
 
@@ -216,6 +225,12 @@ def main():
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
+    
+    QtGui.QFontDatabase.addApplicationFont("RobotoMono-VariableFont_wght.ttf")
+    with open(r"..\res\style.qss", "r") as f:
+        _style = f.read()
+        app.setStyleSheet(_style)
+
     sys.exit(app.exec())
 
 
