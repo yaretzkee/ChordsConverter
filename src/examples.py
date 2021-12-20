@@ -171,7 +171,7 @@ Szukam szukania mi trzeba...
 
         self.chopro = r'''{artist: ChoPro 2 LaTeX Leadsheets}
 {title: Python Converter - Chords Above}
-{composer: YARA & Co.}
+{composer: Felipe & Co.}
 {lyricist: Felipe - $ka} # must be sanitized. _ not allowed in leadsheets
 {capo: 4}
 {key: Bb}

@@ -1,11 +1,12 @@
-import sys
-sys.path.insert(0, '..')
 import logging as log
 import re
+import sys
+sys.path.insert(0, '..')
+
 from src.regex_patterns import *
 
 log.basicConfig(
-    level=log.DEBUG,
+    level=log.WARNING,
     format='%(levelname)s: %(module)s.%(funcName)s(); Message: %(message)s')
 
 class Chord:

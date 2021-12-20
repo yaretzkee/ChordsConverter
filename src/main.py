@@ -1,7 +1,7 @@
-import sys, os
-sys.path.insert(0, '..')
 import logging as log
 import pathlib
+import sys, os
+sys.path.insert(0, '..')
 
 from PySide6 import QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
@@ -19,7 +19,7 @@ is_rcc = designer.build('rcc', '../img/icons.qrc', '../src/icons_rc.py')
 from src.ui_mainwindow import Ui_MainWindow
 
 log.basicConfig(
-    level=log.DEBUG,
+    level=log.WARNING,
     format='%(levelname)s: %(module)s.%(funcName)s(); Message: %(message)s')
 
 

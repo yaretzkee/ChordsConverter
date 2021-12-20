@@ -2112,6 +2112,9 @@
    </property>
   </action>
   <action name="actionSave">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../img/icons.qrc">
      <normaloff>:/actions/media-floppy.png</normaloff>:/actions/media-floppy.png</iconset>
@@ -2121,6 +2124,9 @@
    </property>
   </action>
   <action name="actionAbout">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../img/icons.qrc">
      <normaloff>:/actions/help.png</normaloff>:/actions/help.png</iconset>

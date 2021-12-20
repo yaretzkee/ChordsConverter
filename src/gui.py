@@ -2,6 +2,7 @@
 import subprocess
 import sys
 sys.path.insert(0, '..')
+
 from PySide6.QtDesigner import QFormBuilder
 from PySide6.QtCore import QFile
 # ------------------------------------------------------------------------------
