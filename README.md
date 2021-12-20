@@ -12,13 +12,13 @@ Somewhat inspired by [this project](https://ultimate.ftes.de/) which works ok, b
 
 ## Formats coverage
 
-| Feature                        | Read               | Write             | Comment
-|:-------------------------------- |:------------------:|:------------------|:--------
-| [Ultimate Guitars](https://www.ultimate-guitar.com/)                 | :heavy_check_mark: | :x:|
-| [ChordPro](https://chordpro.org)                         | :heavy_check_mark: | :heavy_check_mark:|
-| Latex with [leadsheets](https://www.ctan.org/pkg/leadsheets)            | :heavy_check_mark: | :heavy_check_mark:|
-| Latex with [sOngs](https://ctan.org/pkg/songs)             | :x:           | :heavy_check_mark:|
-| HK*                              | :heavy_check_mark: | :heavy_check_mark:|
+| Feature                                                      | Read               | Write             | Comment
+|:-------------------------------------------------------------|:-------------------|:------------------|:------------------|
+| [Ultimate Guitars](https://www.ultimate-guitar.com/)         | :heavy_check_mark: | :x:               |
+| [ChordPro](https://chordpro.org)                             | :heavy_check_mark: | :heavy_check_mark:|
+| Latex with [leadsheets](https://www.ctan.org/pkg/leadsheets) | :heavy_check_mark: | :heavy_check_mark:|
+| Latex with [sOngs](https://ctan.org/pkg/songs)               | :x:                | :heavy_check_mark:|
+| HK*                                                          | :heavy_check_mark: | :heavy_check_mark:|
 
 ## Requirements
 
