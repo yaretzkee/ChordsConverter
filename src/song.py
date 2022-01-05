@@ -2,7 +2,6 @@ import sys
 sys.path.insert(0, '..')
 import re
 
-from pprint import pprint
 from string import Template
 
 from src.chord import Chord
@@ -445,9 +444,4 @@ class Song:
         return ''.join(ll)
 
 if __name__ == '__main__':
-    e = Example()
-    
-    s = Song(e.chopro, input_format=1)
-    print(s.title, s.band)
-    txt = s.convert(3)
-    print(txt)
+    pass
