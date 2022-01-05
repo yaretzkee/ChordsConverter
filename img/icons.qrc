@@ -8,6 +8,10 @@
     <file>media-playback-start.png</file>
     <file>dialog-error.png</file>
   </qresource>
+  <qresource prefix="states">
+    <file>switch_off.png</file>
+    <file>switch_on.png</file>
+  </qresource>
   <qresource prefix="other"/>
   <qresource prefix="logos">
     <file>app_icon.png</file>
