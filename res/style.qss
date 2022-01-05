@@ -2,3 +2,9 @@ QPlainTextEdit{
     /*font: 9pt "Courier New";*/
     font-family: "Roboto Mono"
 }
+QPushButton{
+    background:rgba(65,66,66, 0);
+} 
+QPushButton::checked{
+    background:rgba(255, 0, 0, 0);
+}
