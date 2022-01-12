@@ -16,9 +16,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QMainWindow,
-    QMenu, QMenuBar, QPlainTextEdit, QPushButton,
-    QSizePolicy, QStatusBar, QToolBar, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QGridLayout, QLineEdit,
+    QMainWindow, QMenu, QMenuBar, QPlainTextEdit,
+    QPushButton, QSizePolicy, QStatusBar, QToolBar,
+    QWidget)
 import icons_rc
 
 class Ui_MainWindow(object):
@@ -113,6 +114,11 @@ class Ui_MainWindow(object):
         self.actionExaples.setObjectName(u"actionExaples")
         self.actionExaples.setCheckable(True)
         self.actionExaples.setChecked(True)
+        self.actionWywrota = QAction(MainWindow)
+        self.actionWywrota.setObjectName(u"actionWywrota")
+        icon10 = QIcon()
+        icon10.addFile(u":/examples/application-wywrota.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.actionWywrota.setIcon(icon10)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -123,19 +129,22 @@ class Ui_MainWindow(object):
         self.gridLayout_3 = QGridLayout(self.centralwidget)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
         self.cbx_input_format = QComboBox(self.centralwidget)
-        icon10 = QIcon()
-        icon10.addFile(u":/examples/application-ug.png", QSize(), QIcon.Normal, QIcon.On)
-        self.cbx_input_format.addItem(icon10, "")
         icon11 = QIcon()
-        icon11.addFile(u":/examples/application-chopro.png", QSize(), QIcon.Normal, QIcon.On)
+        icon11.addFile(u":/examples/application-ug.png", QSize(), QIcon.Normal, QIcon.On)
         self.cbx_input_format.addItem(icon11, "")
         icon12 = QIcon()
-        icon12.addFile(u":/examples/application-x-tex.png", QSize(), QIcon.Normal, QIcon.On)
-        self.cbx_input_format.addItem(icon12, "")
+        icon12.addFile(u":/examples/application-chopro.png", QSize(), QIcon.Normal, QIcon.On)
         self.cbx_input_format.addItem(icon12, "")
         icon13 = QIcon()
-        icon13.addFile(u":/examples/application-hk.png", QSize(), QIcon.Normal, QIcon.On)
+        icon13.addFile(u":/examples/application-x-tex.png", QSize(), QIcon.Normal, QIcon.On)
         self.cbx_input_format.addItem(icon13, "")
+        self.cbx_input_format.addItem(icon13, "")
+        icon14 = QIcon()
+        icon14.addFile(u":/examples/application-hk.png", QSize(), QIcon.Normal, QIcon.On)
+        self.cbx_input_format.addItem(icon14, "")
+        icon15 = QIcon()
+        icon15.addFile(u":/examples/application-wywrota.png", QSize(), QIcon.Normal, QIcon.On)
+        self.cbx_input_format.addItem(icon15, "")
         self.cbx_input_format.setObjectName(u"cbx_input_format")
         font = QFont()
         font.setPointSize(14)
@@ -337,7 +346,6 @@ class Ui_MainWindow(object):
         palette2.setBrush(QPalette.Disabled, QPalette.PlaceholderText, brush10)
 #endif
         self.text_out.setPalette(palette2)
-        self.text_out.setFont(font1)
         self.text_out.setReadOnly(True)
 
         self.gridLayout_3.addWidget(self.text_out, 5, 2, 1, 1)
@@ -429,10 +437,10 @@ class Ui_MainWindow(object):
         self.btn_chords_above.setPalette(palette3)
         self.btn_chords_above.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_chords_above.setAutoFillBackground(False)
-        icon14 = QIcon()
-        icon14.addFile(u":/states/switch_off.png", QSize(), QIcon.Normal, QIcon.Off)
-        icon14.addFile(u":/states/switch_on.png", QSize(), QIcon.Normal, QIcon.On)
-        self.btn_chords_above.setIcon(icon14)
+        icon16 = QIcon()
+        icon16.addFile(u":/states/switch_off.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon16.addFile(u":/states/switch_on.png", QSize(), QIcon.Normal, QIcon.On)
+        self.btn_chords_above.setIcon(icon16)
         self.btn_chords_above.setIconSize(QSize(40, 18))
         self.btn_chords_above.setCheckable(True)
         self.btn_chords_above.setChecked(False)
@@ -441,17 +449,23 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addWidget(self.btn_chords_above, 2, 2, 1, 1, Qt.AlignLeft)
 
         self.cbx_output_format = QComboBox(self.centralwidget)
-        self.cbx_output_format.addItem(icon10, "")
         self.cbx_output_format.addItem(icon11, "")
         self.cbx_output_format.addItem(icon12, "")
-        self.cbx_output_format.addItem(icon12, "")
         self.cbx_output_format.addItem(icon13, "")
+        self.cbx_output_format.addItem(icon13, "")
+        self.cbx_output_format.addItem(icon14, "")
         self.cbx_output_format.setObjectName(u"cbx_output_format")
         self.cbx_output_format.setFont(font)
         self.cbx_output_format.setIconSize(QSize(32, 32))
         self.cbx_output_format.setFrame(True)
 
         self.gridLayout_3.addWidget(self.cbx_output_format, 1, 2, 1, 1)
+
+        self.le_URL = QLineEdit(self.centralwidget)
+        self.le_URL.setObjectName(u"le_URL")
+        self.le_URL.setClearButtonEnabled(True)
+
+        self.gridLayout_3.addWidget(self.le_URL, 2, 0, 1, 1)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -584,6 +598,7 @@ class Ui_MainWindow(object):
         self.menuExamples.addAction(self.actionLaTeX_leadsheets)
         self.menuExamples.addAction(self.actionLaTeX_songs)
         self.menuExamples.addAction(self.actionHK)
+        self.menuExamples.addAction(self.actionWywrota)
         self.menuHelp.addAction(self.actionAbout)
         self.menuConvert.addAction(self.actionConvert)
         self.menuToolbars.addAction(self.actionActions)
@@ -593,6 +608,7 @@ class Ui_MainWindow(object):
         self.toolBar_examples.addAction(self.actionChordPro)
         self.toolBar_examples.addAction(self.actionLaTeX_leadsheets)
         self.toolBar_examples.addAction(self.actionHK)
+        self.toolBar_examples.addAction(self.actionWywrota)
 
         self.retranslateUi(MainWindow)
         self.action_Quit.triggered.connect(MainWindow.close)
@@ -619,11 +635,13 @@ class Ui_MainWindow(object):
         self.action_Quit.setText(QCoreApplication.translate("MainWindow", u"&Quit", None))
         self.actionActions.setText(QCoreApplication.translate("MainWindow", u"Actions", None))
         self.actionExaples.setText(QCoreApplication.translate("MainWindow", u"Exaples", None))
+        self.actionWywrota.setText(QCoreApplication.translate("MainWindow", u"Wywrota", None))
         self.cbx_input_format.setItemText(0, QCoreApplication.translate("MainWindow", u"Ultimate Tabs", None))
         self.cbx_input_format.setItemText(1, QCoreApplication.translate("MainWindow", u"ChordPro", None))
         self.cbx_input_format.setItemText(2, QCoreApplication.translate("MainWindow", u"LaTeX (leadsheets)", None))
         self.cbx_input_format.setItemText(3, QCoreApplication.translate("MainWindow", u"LaTeX (sOngs)", None))
         self.cbx_input_format.setItemText(4, QCoreApplication.translate("MainWindow", u"\"Koliba\"", None))
+        self.cbx_input_format.setItemText(5, QCoreApplication.translate("MainWindow", u"Wywrota", None))
 
         self.btn_chords_above.setText(QCoreApplication.translate("MainWindow", u" Chords above lyrics", None))
         self.cbx_output_format.setItemText(0, QCoreApplication.translate("MainWindow", u"Ultimate Guitars", None))
@@ -632,6 +650,7 @@ class Ui_MainWindow(object):
         self.cbx_output_format.setItemText(3, QCoreApplication.translate("MainWindow", u"LaTeX (sOngs)", None))
         self.cbx_output_format.setItemText(4, QCoreApplication.translate("MainWindow", u"\"Koliba\"", None))
 
+        self.le_URL.setPlaceholderText(QCoreApplication.translate("MainWindow", u"https://spiewnik.wywrota.pl/", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuExamples.setTitle(QCoreApplication.translate("MainWindow", u"Examples", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))

@@ -17,7 +17,8 @@ class Chord:
 
     def __str__(self):
         return self._merge_fractions()
-    
+    def __repr__(self):
+        return self._merge_fractions()
     def _merge_fractions(self):
         self.chord_fractions = [self.root, self.semitone, self.minor, self.ext1, self.ext2, self.ext3, self.ext4, self.ext5]
         s = [f for f in self.chord_fractions if f]

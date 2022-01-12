@@ -161,6 +161,16 @@ QPushButton::checked{
         </iconset>
        </property>
       </item>
+      <item>
+       <property name="text">
+        <string>Wywrota</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/examples/application-wywrota.png</normalon>
+        </iconset>
+       </property>
+      </item>
      </widget>
     </item>
     <item row="5" column="0">
@@ -1338,9 +1348,6 @@ QPushButton::checked{
         </disabled>
        </palette>
       </property>
-      <property name="font">
-       <font/>
-      </property>
       <property name="readOnly">
        <bool>true</bool>
       </property>
@@ -2024,6 +2031,16 @@ QPushButton::checked{
       </item>
      </widget>
     </item>
+    <item row="2" column="0">
+     <widget class="QLineEdit" name="le_URL">
+      <property name="placeholderText">
+       <string>https://spiewnik.wywrota.pl/</string>
+      </property>
+      <property name="clearButtonEnabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -2055,6 +2072,7 @@ QPushButton::checked{
      <addaction name="actionLaTeX_leadsheets"/>
      <addaction name="actionLaTeX_songs"/>
      <addaction name="actionHK"/>
+     <addaction name="actionWywrota"/>
     </widget>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
@@ -2728,6 +2746,7 @@ QPushButton::checked{
    <addaction name="actionChordPro"/>
    <addaction name="actionLaTeX_leadsheets"/>
    <addaction name="actionHK"/>
+   <addaction name="actionWywrota"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -2852,6 +2871,15 @@ QPushButton::checked{
    </property>
    <property name="text">
     <string>Exaples</string>
+   </property>
+  </action>
+  <action name="actionWywrota">
+   <property name="icon">
+    <iconset resource="../img/icons.qrc">
+     <normaloff>:/examples/application-wywrota.png</normaloff>:/examples/application-wywrota.png</iconset>
+   </property>
+   <property name="text">
+    <string>Wywrota</string>
    </property>
   </action>
  </widget>

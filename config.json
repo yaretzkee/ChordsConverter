@@ -1,0 +1,13 @@
+{
+    "runtime":
+    {
+        "compile_ui": true,
+        "compile_qrc": true
+    }, 
+    "gui":
+    {
+        "fontsize": 9,
+        "fontface" : "Segoe UI",
+        "examples_toolbar": true
+    }
+}

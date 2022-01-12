@@ -2,6 +2,9 @@ import sys
 sys.path.insert(0, '..')
 import re
 
+from bs4 import BeautifulSoup
+from bs4.element import ContentMetaAttributeValue, NavigableString, Tag
+
 from string import Template
 
 from src.chord import Chord
@@ -45,6 +48,9 @@ class Song:
 
         elif self.input_format == 4: 
             self._read_koliba()
+
+        elif self.input_format == 5:
+            self._read_wywrota()
         
         else:
             pass       
@@ -205,9 +211,39 @@ class Song:
                 
                     self.song_body.append(line_data)
 
-    def _to_ug(self):
-        pass
-    
+    def _read_wywrota(self):
+        self.song_body = []
+
+        soup = BeautifulSoup('\n'.join(self.raw_text), 'html5lib')
+        self.title, self.band = [meta for meta in soup.find('h1').stripped_strings]
+        
+        content = soup.find('div', 'interpretation-content').contents
+
+        prev_line_type = None
+        lyrics, chords = '',[]
+
+        for line in content:
+            if isinstance(line, NavigableString) and line.strip():
+                if prev_line_type in (NavigableString, Tag):
+                    if line.name != 'br':
+                        
+                        chords = [Chord(txt=c, input_mode='german') for c in chords]
+                        pairs = [(-1, crd) for crd in chords]
+                        env = 'verse'
+                        line_data = {'mode': env, 'lyrics': lyrics, 'chords': chords, 'pos_crd_pairs': pairs}
+                        self.song_body.append(line_data)
+
+                        lyrics, chords = '',[]
+
+                lyrics += line.strip()
+                prev_line_type = type(line)
+
+            elif isinstance(line, Tag):
+                if line.name == 'code':
+                    chords.append(line['data-local'])
+                    prev_line_type = type(line)
+
+
     @property
     def lyrics_line_max_len(self):
         #return max([len(line['lyrics']) for line in self.song_body if line['mode'] != 'tabs'])
@@ -279,7 +315,6 @@ class Song:
 
         txt = TEMPLATE_SONG_BEGIN.safe_substitute(title=self.title, artist=self.band, other_properties=other_properties)
 
-        
         prev_mode = 'default'
         for line in self.song_body:
             line["chords"] = [c._to_tex() for c in line["chords"]]
@@ -300,7 +335,10 @@ class Song:
                 txt += self.merge_chords_and_lyrics(lyricsline=line['lyrics'],pairs=line['pos_crd_pairs'], chord_format='leadsheets_above')
                 txt += '\\\\\n'
             else:
-                txt += f'{line["lyrics"]} \\tab{crds}\\\\\n'
+                
+                txt += f'{line["lyrics"]}'
+                txt += f' \\tab{crds}\\\\\n' if crds.strip() else f' \\\\\n' 
+
 
         txt += TEMPLATE_ENV_END.safe_substitute(env=prev_mode)
         txt += '\\end{song}'
@@ -410,7 +448,7 @@ class Song:
         
         elif to_format == 4: 
             output = self._to_koliba(chords_above=chords_above)
-
+        
         else: 
             output = 'ERROR! unknown option'
 
@@ -443,5 +481,20 @@ class Song:
         
         return ''.join(ll)
 
+
+def TEST_WYWROTA():
+    with open(file='..\dev\wywrota_parser_dev\dump.html', mode='r', encoding='utf-8') as f:
+        html = f.read()
+
+    from pprint import pprint
+    song = Song(raw_text=html, input_format=5)
+    pprint(song._to_chopro())
 if __name__ == '__main__':
-    pass
+    TEST_WYWROTA()
+
+
+
+# --------- TO DO/FIX -----------------------
+    # _read_wywrota(self) - does not conider last line
+    # _read_wywrota(self) - 
+    # _read_wywrota(self) - add example

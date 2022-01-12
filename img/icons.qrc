@@ -17,6 +17,7 @@
     <file>app_icon.png</file>
   </qresource>
   <qresource prefix="examples">
+    <file>application-wywrota.png</file>
     <file>application-ug.png</file>
     <file>application-x-tex.png</file>
     <file>application-chopro.png</file>

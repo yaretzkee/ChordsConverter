@@ -4,22 +4,30 @@ import sys, os
 sys.path.insert(0, '..')
 
 from PySide6 import QtGui
+from PySide6.QtGui import QRegularExpressionValidator
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
-from PySide6.QtCore import Qt, QFile
-
+from PySide6.QtCore import QRegularExpression, QRegularExpressionMatch, Qt, QFile, QUrl
+from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest
 from src.gui import Designer
 from src.examples import Example
 from src.song import Song
+from src.config import Config
 
 os.chdir(pathlib.Path(__file__).parent)
 
-designer = Designer()
-is_uic = designer.build('uic','main_window.ui', 'ui_mainwindow.py')
-is_rcc = designer.build('rcc', '../img/icons.qrc', 'icons_rc.py')
-from src.ui_mainwindow import Ui_MainWindow
+config = Config().config
 
+designer = Designer()
+if config.runtime.compile_ui:
+    is_uic = designer.build('uic','main_window.ui', 'ui_mainwindow.py')
+
+if config.runtime.compile_qrc:
+    is_rcc = designer.build('rcc', '../img/icons.qrc', 'icons_rc.py')
+
+from src.ui_mainwindow import Ui_MainWindow
+from config import Config
 log.basicConfig(
-    level=log.WARNING,
+    level=log.DEBUG,
     format='%(levelname)s: %(module)s.%(funcName)s(); Message: %(message)s')
 
 
@@ -31,10 +39,18 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.example = Example()
         self.last_used_filepath = None
-
+        self.config = Config().config
         # ------ EVENT Connections --------------------------------------------
         self._connect_events()
         # --------------------------------------------------------------------
+        
+        # ------- SET VALIDATORS ----------------------------------------------
+        self.url_validator = QRegularExpressionValidator()
+        self.url_validator.setRegularExpression(r'(https://)?(spiewnik\.wywrota\.pl/)(.*)')
+        self.ui.le_URL.setValidator(self.url_validator)
+        # ---------------------------------------------------------------------
+        self.network_manager = QNetworkAccessManager()
+
         self._init_states()
         self.is_init_completed = True
         log.info('App __init__ COMPLETED!')
@@ -53,6 +69,7 @@ class MainWindow(QMainWindow):
         self.ui.btn_chords_above.toggled.connect(self.onChangeChordsAbove)
         self.ui.cbx_input_format.currentIndexChanged.connect(self.__read_input_format)
         self.ui.cbx_output_format.currentIndexChanged.connect(self.__read_output_format)
+        self.ui.le_URL.returnPressed.connect(self.__read_URL)
 
     def _init_states(self):
         self.input_format = 0
@@ -60,7 +77,9 @@ class MainWindow(QMainWindow):
         self.ui.cbx_output_format.setCurrentIndex(2)
         self.ui.btn_chords_above.setChecked(False)
         self.chords_above = 0
-
+        self.ui.le_URL.hide()
+        self.ui.actionExaples.setChecked(self.config.gui.examples_toolbar)
+        
     def openFile(self):
         if not self.last_used_filepath:
             self.last_used_filepath ='..'
@@ -126,10 +145,41 @@ class MainWindow(QMainWindow):
 
     def _check_in_out(self):
         pass
+    
+    def __read_URL(self):
+        url = QUrl(self.ui.le_URL.text())
+        self.__fetch_wywrota_html(url) # writes html to in_text window
+        #self.convert()
+        
+        log.debug(self.url_validator.State())
+        log.debug(url.isValid())
+        log.debug(url.url())
+    
+    def __fetch_wywrota_html(self, url):
+        def __finishedCallback():
+            with open('..\dev\wywrota_parser_dev\dump.html', mode='w', encoding='utf-8') as f:
+                html = str(resp.readAll(), 'utf-8')
+                f.write(html)
+            self.ui.text_in.setPlainText(html)
+        
+        req = QNetworkRequest(url)
+        resp = self.network_manager.get(req)
+        resp.finished.connect(__finishedCallback)
+        
 
     def __read_input_format(self, idx):
         self.input_format = idx
-        self.convert()
+        # if wywrota.pl do not convert immediately - wait for url input
+        if self.input_format == 5: 
+            self.ui.le_URL.show()
+            self.ui.btn_chords_above.setDisabled(True)
+            self.ui.btn_chords_above.setChecked(False)
+        
+        else:
+            self.ui.le_URL.hide()
+            self.ui.btn_chords_above.setDisabled(False)
+
+            self.convert()
 
         log.debug(f'self.input_format= {self.input_format}')
 
@@ -137,7 +187,7 @@ class MainWindow(QMainWindow):
         # use Combobox to set format
         self.output_format = idx
 
-        if self.output_format == 4:
+        if self.output_format in (4,5):
             self.ui.btn_chords_above.setDisabled(True)
             self.ui.btn_chords_above.setChecked(False)
 
