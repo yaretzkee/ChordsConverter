@@ -79,17 +79,19 @@ class MainWindow(QMainWindow):
         self.chords_above = 0
         self.ui.le_URL.hide()
         self.ui.actionExaples.setChecked(self.config.gui.examples_toolbar)
-        
+
     def openFile(self):
         if not self.last_used_filepath:
-            self.last_used_filepath ='..'
+            self.last_used_filepath = pathlib.Path(self.config.folders.default_folder)
+            if not self.last_used_filepath.exists():
+                self.last_used_filepath = pathlib.Path('..')
 
         fname = QFileDialog.getOpenFileName(self, 
             caption="Open song file",
-            dir=self.last_used_filepath,
+            dir=self.last_used_filepath.as_posix(),
             filter=("Songs (*.chopro *.crd *.tex *.sng *.txt)"))
 
-        self.last_used_filepath = pathlib.PurePath(fname[0]).parent.as_posix()
+        self.last_used_filepath = pathlib.PurePath(fname[0]).parent
         ext = pathlib.PurePath(fname[0]).suffix
         try:
             with open(file=fname[0], mode='r', encoding='utf-8') as f:

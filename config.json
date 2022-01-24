@@ -4,6 +4,10 @@
         "compile_ui": true,
         "compile_qrc": true
     }, 
+    "folders":
+    {
+        "default_folder" : "D:/00_CLOUD/Dropbox/99.TEMP_non_public/PROGRAMMING/python/projects/SONGBOOK-LaTex/data/songs"
+    }, 
     "gui":
     {
         "fontsize": 9,
@@ -11,3 +15,4 @@
         "examples_toolbar": true
     }
 }
+
