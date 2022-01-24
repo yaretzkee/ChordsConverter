@@ -108,18 +108,17 @@ class Song:
 
                 else:
 
-
                     if re.findall(REGEX_CHOPRO_CHORD, line):
                         pairs = []
                         corr_factor = 0
-                        for m in re.finditer(REGEX_CHOPRO_CHORD, line):
-                            pairs.append((m.start() - corr_factor, Chord(txt=m.group(1), input_mode='english')))
+                        for idx, m in enumerate(re.finditer(REGEX_CHOPRO_CHORD, line)):
+                            pairs.append((m.start() - corr_factor + idx, Chord(txt=m.group(1), input_mode='english')))
                             corr_factor += len(m.group(0))
-                        
+
                         chords = re.findall(REGEX_CHOPRO_CHORD, line)
                         chords = [Chord(txt=c, input_mode='english') for c in chords]
 
-                    lyrics = re.sub(REGEX_CHOPRO_CHORD, '', line).replace('\\','').strip()
+                    lyrics = re.sub(REGEX_CHOPRO_CHORD, '', line).strip()
 
                     #chords = ' '.join(chords)
                     line_data = {'mode': env, 'lyrics': lyrics, 'chords': chords, 'pos_crd_pairs': pairs}
@@ -144,7 +143,6 @@ class Song:
                         if hasattr(self, 'band'):
                                 setattr(self, 'artist', self.band)
 
-
                     if re.match(REGEX_LEADSHEETS_ENVIRONMENTS, line):
                         if re.match(REGEX_LEADSHEETS_ENVIRONMENTS, line)[1] == 'begin':
                             env = re.match(REGEX_LEADSHEETS_ENVIRONMENTS, line)[2]
@@ -158,8 +156,8 @@ class Song:
                     if re.findall(REGEX_LEADSHEETS_CHORD, line):
                         pairs = []
                         corr_factor = 0
-                        for m in re.finditer(REGEX_LEADSHEETS_CHORD, line):
-                            pairs.append((m.start() - corr_factor, Chord(txt=m.group(1), input_mode='english')))
+                        for idx, m in enumerate(re.finditer(REGEX_LEADSHEETS_CHORD, line)):
+                            pairs.append((m.start() - corr_factor + idx, Chord(txt=m.group(1), input_mode='english')))
                             corr_factor += len(m.group(0))
                         
                         chords = re.findall(REGEX_LEADSHEETS_CHORD, line)
@@ -498,3 +496,4 @@ if __name__ == '__main__':
     # _read_wywrota(self) - does not conider last line
     # _read_wywrota(self) - 
     # _read_wywrota(self) - add example
+    # add _sanitize_input to remove all multi-spaces
