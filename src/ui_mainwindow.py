@@ -61,7 +61,6 @@ class Ui_MainWindow(object):
         self.actionOpen.setIcon(icon1)
         self.actionSave = QAction(MainWindow)
         self.actionSave.setObjectName(u"actionSave")
-        self.actionSave.setEnabled(False)
         icon2 = QIcon()
         icon2.addFile(u":/actions/media-floppy.png", QSize(), QIcon.Normal, QIcon.Off)
         self.actionSave.setIcon(icon2)
@@ -621,7 +620,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Songs formats converter v0.1", None))
         self.actionOpen.setText(QCoreApplication.translate("MainWindow", u"&Open...", None))
-        self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Save", None))
+        self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Save as...", None))
         self.actionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
         self.actionUltimate_Guitar.setText(QCoreApplication.translate("MainWindow", u"Ultimate Guitar", None))
         self.actionChordPro.setText(QCoreApplication.translate("MainWindow", u"ChordPro", None))

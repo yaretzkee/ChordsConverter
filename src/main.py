@@ -118,10 +118,28 @@ class MainWindow(QMainWindow):
             log.debug(f'openinig file: {fname[0]}')
 
     def saveAsFile(self):
+        if not self.last_used_filepath:
+            self.last_used_filepath = pathlib.Path(self.config.folders.default_folder)
+            if not self.last_used_filepath.exists():
+                self.last_used_filepath = pathlib.Path('..')
+
         formats = ['Ultimate Guitar (*.txt)', 'ChoPro (*.chopro', 'LaTeX (*.tex)','LaTeX sOngs (*.tex)' 'HK (*.sng)']
 
-        fname = QFileDialog.getSaveFileName('Save as...', 'capotion', '.', formats[self.output_format])
-        log.debug(f'Save as... {fname}')
+        fname = QFileDialog.getSaveFileName(
+            caption='Save as...',
+            dir=self.last_used_filepath.as_posix(),
+            filter=formats[self.output_format])
+
+        try:
+            with open(file=fname[0], mode='w', encoding='utf-8') as f:
+                data = self.ui.text_out.toPlainText()
+                f.write(data)
+        
+        except FileNotFoundError:
+            log.warning('File save failed.')
+        
+        finally:
+            log.debug(f'attempt to save file as: {fname}')
 # ------------------------------------------------------------------------------
     def menuExamples_ug(self):
         self.load_example(0)
