@@ -310,6 +310,10 @@ class Song:
         if hasattr(self, 'capo') and self.capo:
             tmp_property = Template(',capo={$property}')
             other_properties += tmp_property.safe_substitute(property=self.capo)
+        elif hasattr(self, 'key') and self.key:
+            k = Chord(self.key, input_mode='english')._to_tex()
+            tmp_property = Template(',key={$property}')
+            other_properties += tmp_property.safe_substitute(property=k)
 
         txt = TEMPLATE_SONG_BEGIN.safe_substitute(title=self.title, artist=self.band, other_properties=other_properties)
 
@@ -487,6 +491,7 @@ def TEST_WYWROTA():
     from pprint import pprint
     song = Song(raw_text=html, input_format=5)
     pprint(song._to_chopro())
+
 if __name__ == '__main__':
     TEST_WYWROTA()
 
