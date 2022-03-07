@@ -42,3 +42,6 @@ python songs_converter.pyw
 * open file with song or paste content to input text field
 * choose input format (if not recognized)
 * click convert or hit F5
+
+### Screenshots
+![Alt text](/screenshots/view1.png?raw=true "Optional Title")
