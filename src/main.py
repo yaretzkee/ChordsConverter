@@ -124,12 +124,15 @@ class MainWindow(QMainWindow):
                 self.last_used_filepath = pathlib.Path('..')
 
         formats = ['Ultimate Guitar (*.txt)', 'ChoPro (*.chopro', 'LaTeX (*.tex)','LaTeX sOngs (*.tex)' 'HK (*.sng)']
-
-        fname = QFileDialog.getSaveFileName(
+        saveDialog = QFileDialog(self)
+        
+        saveDialog.FileName =  self.saveas_fname if hasattr(self, 'saveas_fname') else ''
+        
+        fname = saveDialog.getSaveFileName(
             caption='Save as...',
-            dir=self.last_used_filepath.as_posix(),
+            dir=self.last_used_filepath.joinpath(self.saveas_fname).as_posix(),
             filter=formats[self.output_format])
-
+        self.last_used_filepath = pathlib.PurePath(fname[0]).parent
         try:
             with open(file=fname[0], mode='w', encoding='utf-8') as f:
                 data = self.ui.text_out.toPlainText()
@@ -185,7 +188,6 @@ class MainWindow(QMainWindow):
         req = QNetworkRequest(url)
         resp = self.network_manager.get(req)
         resp.finished.connect(__finishedCallback)
-        
 
     def __read_input_format(self, idx):
         self.input_format = idx
@@ -238,7 +240,8 @@ class MainWindow(QMainWindow):
                 try:
                     s = Song(raw_text=in_txt, input_format=self.input_format)
                     out_txt = s.convert(to_format=self.output_format, chords_above=self.chords_above)
-                
+                    self.saveas_fname = s.save_as
+
                 except (UnboundLocalError, AttributeError) as err:
                     log.error(err)
                     out_txt = 'ERROR!'
@@ -265,6 +268,31 @@ def main():
 
     sys.exit(app.exec())
 
+def convSingleFile(song_path):
+    with open(file=song_path, mode='r', encoding='utf-8') as f:
+        raw_txt = f.read()
+        s = Song(raw_text=raw_txt, input_format=2)
+        k = s.convert(to_format=4)
+    return k
 
 if __name__ == '__main__':
-    main()
+    p = pathlib.Path('D:/00_CLOUD/Dropbox/99.TEMP_non_public/PROGRAMMING/python/projects/SONGBOOK-LaTex/data/songs/01_COUNTRY/cezary-makiewicz-wszystkie-drogi-prowadza-do-mragowa.tex')
+    out = convSingleFile(p)
+    
+    in_folder = pathlib.Path('D:/00_CLOUD/Dropbox/99.TEMP_non_public/PROGRAMMING/python/projects/SONGBOOK-LaTex/data/songs')
+    out_folder = pathlib.Path('../dev/output_koliba') 
+    
+    for dname in sorted(in_folder.iterdir()):
+        target_path = out_folder.joinpath(dname.stem)
+        if not target_path.exists():
+            target_path.mkdir(parents=True)
+
+        for fname in dname.iterdir():
+            with open(file=fname, mode='r', encoding='utf-8') as f:
+                raw_txt = f.read()
+
+            s = Song(raw_text=raw_txt, input_format=2)
+            target_fname = f'{s.save_as}.sng'
+            print(target_path.joinpath(target_fname))
+            with open(file=target_path.joinpath(target_fname), mode='w', encoding='utf-8') as f:
+                f.write(s.convert(to_format=4))

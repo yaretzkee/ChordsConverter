@@ -345,7 +345,7 @@ class Ui_MainWindow(object):
         palette2.setBrush(QPalette.Disabled, QPalette.PlaceholderText, brush10)
 #endif
         self.text_out.setPalette(palette2)
-        self.text_out.setReadOnly(True)
+        self.text_out.setReadOnly(False)
 
         self.gridLayout_3.addWidget(self.text_out, 5, 2, 1, 1)
 
@@ -620,7 +620,13 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Songs formats converter v0.1", None))
         self.actionOpen.setText(QCoreApplication.translate("MainWindow", u"&Open...", None))
-        self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Save as...", None))
+#if QT_CONFIG(shortcut)
+        self.actionOpen.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+O", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionSave.setText(QCoreApplication.translate("MainWindow", u"&Save as...", None))
+#if QT_CONFIG(shortcut)
+        self.actionSave.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+S", None))
+#endif // QT_CONFIG(shortcut)
         self.actionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
         self.actionUltimate_Guitar.setText(QCoreApplication.translate("MainWindow", u"Ultimate Guitar", None))
         self.actionChordPro.setText(QCoreApplication.translate("MainWindow", u"ChordPro", None))
