@@ -5,7 +5,7 @@ sys.path.insert(0, '..')
 
 from src.regex_patterns import *
 
-
+# this class needs to be updated to new version (the one from flask App)
 class Chord:
     '''class decodes chord from txt format and '''
     def __init__(self, txt, **kwargs):

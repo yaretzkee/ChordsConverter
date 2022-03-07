@@ -6,7 +6,7 @@ Simple app that converts guitar chords between different standards.
 
 ## Inspirations
 
-Key driver to write this app was a need for quick conversion of widely available formats, like [ChordPro](https://www.chordpro.org/) or [Ultimate Guitar](https://www.ultimate-guitar.com/) to LaTeX with leadnsheets package.
+Key driver to write this app was a need for quick conversion of widely available formats, like [ChordPro](https://www.chordpro.org/) or [Ultimate Guitar](https://www.ultimate-guitar.com/) to [LaTeX](https://www.latex-project.org/) with [leadsheets](https://www.ctan.org/pkg/leadsheets/) package.
 
 Somewhat inspired by [this project](https://ultimate.ftes.de/) which works ok, but does not cover required formats
 
