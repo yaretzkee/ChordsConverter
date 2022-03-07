@@ -123,7 +123,7 @@ class MainWindow(QMainWindow):
             if not self.last_used_filepath.exists():
                 self.last_used_filepath = pathlib.Path('..')
 
-        formats = ['Ultimate Guitar (*.txt)', 'ChoPro (*.chopro', 'LaTeX (*.tex)','LaTeX sOngs (*.tex)' 'HK (*.sng)']
+        formats = ['Ultimate Guitar (*.txt)', 'ChoPro (*.chopro', 'LaTeX (*.tex)','LaTeX sOngs (*.tex)','HK (*.sng)']
         saveDialog = QFileDialog(self)
         
         saveDialog.FileName =  self.saveas_fname if hasattr(self, 'saveas_fname') else ''
@@ -276,9 +276,7 @@ def convSingleFile(song_path):
     return k
 
 if __name__ == '__main__':
-    p = pathlib.Path('D:/00_CLOUD/Dropbox/99.TEMP_non_public/PROGRAMMING/python/projects/SONGBOOK-LaTex/data/songs/01_COUNTRY/cezary-makiewicz-wszystkie-drogi-prowadza-do-mragowa.tex')
-    out = convSingleFile(p)
-    
+      
     in_folder = pathlib.Path('D:/00_CLOUD/Dropbox/99.TEMP_non_public/PROGRAMMING/python/projects/SONGBOOK-LaTex/data/songs')
     out_folder = pathlib.Path('../dev/output_koliba') 
     
