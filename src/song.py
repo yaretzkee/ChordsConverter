@@ -2,6 +2,8 @@ import sys
 sys.path.insert(0, '..')
 import re
 
+from collections import namedtuple
+from unidecode import unidecode
 from bs4 import BeautifulSoup
 from bs4.element import ContentMetaAttributeValue, NavigableString, Tag
 
@@ -31,10 +33,12 @@ class Song:
         self.title = ''
         self.band = ''
         self.capo = 0
+        self.chords_above = False
         self.category = '' # required in .sng format
-
-
         self._process()
+    
+    def __str__(self):
+        return f'{self.artist} - {self.title}'
     
     def _process(self):
         if self.input_format == 0:
@@ -126,16 +130,27 @@ class Song:
                     chords, lyrics, pairs = '','',''
 
     def _read_latex_leadsheets(self):
+        ''' read LaTeX (leadsheets) formated text and cast 
+        self.song_lines'''
         self.song_body = []
+        LineMarker = namedtuple('LineMarker', ['firstline', 'lastline'], defaults=(False, False))
+        Line = namedtuple('Line', ['mode', 'linemarker', 'lyrics', 'chords', 'pos_crd_pairs','chords_above'], defaults=(None,None,None,None,None,None))
+        linedata = Line()
         env = 'default'
         chords = []
-        for line in self.raw_text:
+        lm = LineMarker() # reset line marker
+
+        for i,line in enumerate(self.raw_text):
+            line_data = dict()
             line = line.strip()
+            cnt = 0 # body line counter
             if line:
+                line = self.decode_leadsheets(line)
                 if re.match(REGEX_LEADSHEETS_CMD, line):
+                    
                     if re.match(REGEX_LEADSHEETS_META_LINE, line):
                         meta = re.findall(REGEX_LEADSHEETS_ALL_META, line)
-        
+
                         for m in meta:
                             setattr(self,m[0].replace('-', ''), m[1])
                     
@@ -144,31 +159,59 @@ class Song:
                                 setattr(self, 'artist', self.band)
 
                     if re.match(REGEX_LEADSHEETS_ENVIRONMENTS, line):
-                        if re.match(REGEX_LEADSHEETS_ENVIRONMENTS, line)[1] == 'begin':
-                            env = re.match(REGEX_LEADSHEETS_ENVIRONMENTS, line)[2]
 
-                        elif re.match(REGEX_LEADSHEETS_ENVIRONMENTS, line)[1] == 'end':
-                            env = 'default'
+                        # skip some envs not required and causing problems. NASTY WORKAROUND !
+                        if re.match(REGEX_LEADSHEETS_ENVIRONMENTS,line)[2] not in ['diagrams']:
+                            if re.match(REGEX_LEADSHEETS_ENVIRONMENTS, line)[1] == 'begin':
+                                env = re.match(REGEX_LEADSHEETS_ENVIRONMENTS, line)[2]
+                                lm = lm._replace(firstline=True)
 
-                else:
-                    line = self.decode_leadsheets(line)
+                            elif re.match(REGEX_LEADSHEETS_ENVIRONMENTS, line)[1] == 'end':
+                                env = 'default'
+                                lm = lm._replace(lastline=True)
+                                
+                                if self.song_body[-1].get('linemarker',False).firstline:
+                                    lm = lm._replace(firstline=True)
+                                
+                                self.song_body[-1].update(linemarker=lm)
+
+                                lm = lm._replace(firstline=False)
+                                lm = lm._replace(lastline=False)
                     
+
+                # process non-command lines (should be text & chords)
+                else:
+                    
+                    # if any of chords starts with ^ song is marked as 'chords above'
+                    if re.findall(REGEX_LEADSHEETS_CHORD_ABOVE, line):
+                        self.chords_above |= True
+                        line_chords_above = True
+                    else:
+                        line_chords_above = False
+                        
+                    pairs = []
                     if re.findall(REGEX_LEADSHEETS_CHORD, line):
-                        pairs = []
+                        
                         corr_factor = 0
+                        
                         for idx, m in enumerate(re.finditer(REGEX_LEADSHEETS_CHORD, line)):
-                            pairs.append((m.start() - corr_factor + idx, Chord(txt=m.group(1), input_mode='english')))
-                            corr_factor += len(m.group(0))
+                                pairs.append((m.start() - corr_factor + idx, Chord(txt=m.group(1), input_mode='english')))
+                                corr_factor += len(m.group(0))
                         
                         chords = re.findall(REGEX_LEADSHEETS_CHORD, line)
                         chords = [Chord(txt=c, input_mode='english') for c in chords]
 
                     lyrics = re.sub(REGEX_LEADSHEETS_CHORD, '', line).replace('\\','').strip()
-
-                    #chords = ' '.join(chords)
-                    line_data = {'mode': env, 'lyrics': lyrics, 'chords': chords, 'pos_crd_pairs': pairs}
+                    lyrics = re.sub(r'\s{2,}', ' ', lyrics)
+                    
+                    line_data.update(mode=env, lyrics=lyrics, chords=chords, pos_crd_pairs=pairs, linemarker=lm, chords_above=line_chords_above)
+                    #linedata = linedata._replace(mode=env, lyrics=lyrics, chords=chords, pos_crd_pairs=pairs, linemarker=lm, chords_above=line_chords_above)
+                    # write data to Song Object
                     self.song_body.append(line_data)
+
+                    # Reset vars
                     chords, lyrics, pairs = '','',''
+                    lm = lm._replace(firstline=False, lastline=False)
 
     def _read_koliba(self):
         self.song_body = []
@@ -315,7 +358,8 @@ class Song:
             tmp_property = Template(',key={$property}')
             other_properties += tmp_property.safe_substitute(property=k)
 
-        txt = TEMPLATE_SONG_BEGIN.safe_substitute(title=self.title, artist=self.band, other_properties=other_properties)
+        txt = '\\newpage\n'
+        txt += TEMPLATE_SONG_BEGIN.safe_substitute(title=self.title, artist=self.band, other_properties=other_properties)
 
         prev_mode = 'default'
         for line in self.song_body:
@@ -344,7 +388,8 @@ class Song:
 
         txt += TEMPLATE_ENV_END.safe_substitute(env=prev_mode)
         txt += '\\end{song}'
-
+        txt = self.__fix_last_section_line(txt)
+        
         return txt
 
     def _to_songs(self, chords_above=False):
@@ -432,9 +477,33 @@ class Song:
         txt = re.sub(r'\\say\{(.*?)\}', '"\g<1>"', txt)
         txt = re.sub(r'\\normalbar','|',txt)
         txt = re.sub(r'\\stopbar','||',txt)
+        
+        txt = re.sub(r'\\tabto\{.*?\}|\\tab','',txt)
+        txt = re.sub(r'\\hfill','',txt)
+        txt = re.sub(r'\\remark\{(.*?)\}','\g<1>',txt)
+        txt = re.sub(r'\s*?\\\\$','',txt) # excess spaces
+        txt = re.sub(r'^\s*?%.*$','',txt) # commented lines
         return txt
 
+    @staticmethod
+    def __fix_last_section_line(txt):
+        '''remove double slashes from each last line of section'''
+        t_list = txt.split('\n')
+        pattern = re.compile(r'\s*[\\\\]{2}\s*$')
+        for line in enumerate(t_list):
+            if re.match(REGEX_LEADSHEETS_ENVIRONMENTS, line[1]):
+                t_list[line[0]-1] = re.sub(pattern,'',t_list[line[0] -1 ])
+
+        return '\n'.join(t_list)
+
     def convert(self, to_format, chords_above=False):
+        '''
+        0 - Ultimate Guitar
+        1 - ChordPro
+        2 - LaTeX ('Leadsheets' package, not 'Songs' !!)
+        3 - (in future, not yet) - LaTeX (Songs Package)
+        4 - .sng (Proprietary format used in Hawiarska Koliba songbook)
+        '''
         
         if to_format == 0: 
             output = self._to_ug(chords_above=chords_above)
@@ -483,6 +552,17 @@ class Song:
         
         return ''.join(ll)
 
+    @property
+    def save_as(self):
+        ''' returns filename cast from bandname and artist w/o extention'''
+        fname = f'{self.band} {self.title}'.lower().strip()
+        fname = re.sub(r'\s{2,}|\s-\s',' ',fname)
+        fname = re.sub(r'\s+','-',fname)
+        fname = re.sub(r'|^-$','',fname)
+        fname = re.sub(r'\.|\,|\'|\?','',fname)
+        fname = unidecode(fname)
+
+        return fname
 
 def TEST_WYWROTA():
     with open(file='..\dev\wywrota_parser_dev\dump.html', mode='r', encoding='utf-8') as f:
@@ -492,8 +572,15 @@ def TEST_WYWROTA():
     song = Song(raw_text=html, input_format=5)
     pprint(song._to_chopro())
 
+def dev_slashes():
+    with open(file='d:/00_CLOUD/Dropbox/99.TEMP_non_public/PROGRAMMING/python/projects/SONGBOOK-LaTex/data/songs-dev/99_TEST/.sng/Cień w dolinie mgieł.sng', mode='r', encoding='utf-8') as f:
+        data = f.read()
+    song=Song(raw_text=data, input_format=4)
+    txt = song.convert(to_format=2)
+
+
 if __name__ == '__main__':
-    TEST_WYWROTA()
+    dev_slashes()
 
 
 
