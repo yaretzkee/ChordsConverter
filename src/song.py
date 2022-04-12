@@ -64,15 +64,21 @@ class Song:
         env='default'
         for line in self.raw_text:
             if line.strip():
-
                 if re.match(REGEX_UG_ENVIRONMENTS, line):
                     env = re.match(REGEX_UG_ENVIRONMENTS,line)[1].lower()
                     next_line_is_first_of_env = True
 
+                
                 elif re.findall(REGEX_UG_CHORD, line):
                     matches  = REGEX_UG_CHORD.finditer(line)
                     line_chords = [Chord(txt=crd.group(0), input_mode='english') for crd in matches]
-                    pairs = [(m.start(), Chord(m.group(0),input_mode='english')) for m in re.finditer(REGEX_UG_CHORD, line)]
+                    #pairs = [(m.start(), Chord(m.group(0),input_mode='english')) for m in re.finditer(REGEX_UG_CHORD, line)]
+                    
+                    pairs=[]
+                    corr_factor = 0
+                    for idx, m in enumerate(re.finditer(REGEX_UG_CHORD, line)):
+                        pairs.append((m.start()-corr_factor+idx +1,Chord(m.group(0), input_mode='english')))
+                        #corr_factor += len(m.group(0))
 
                 else:
                     line_data = {'mode':env, 'lyrics':line.lstrip(), 'chords': line_chords, 'pos_crd_pairs': pairs}
@@ -81,7 +87,7 @@ class Song:
                         next_line_is_first_of_env = False
                     else:
                         line_data['is_first'] = False
-
+                    
                     self.song_body.append(line_data)
 
     def _read_chopro(self):
