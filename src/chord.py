@@ -3,8 +3,10 @@ import re
 import sys
 sys.path.insert(0, '..')
 
-from src.regex_patterns import *
-
+try:
+    from src.regex_patterns import *
+except ModuleNotFoundError:
+    from regex_patterns import *
 # this class needs to be updated to new version (the one from flask App)
 class Chord:
     '''class decodes chord from txt format and '''
@@ -145,8 +147,8 @@ class Chord:
         return self._merge_fractions()     
 
 def test():
-    chords = ['H7', 'h7', 'B6','Fis7', 'Cm', 'Am7', 'D4', 'a2', 'G0', 'Fmaj7','Cadd9','E7+', 'a', 'Bbm', 'F#m']
-    chords = ['a0', 'G0', 'Am7b5', 'A7/4','(Am)', 'Emadd9', 'Cmaj7(#11)']
+    chords = ['h','H0','B0','h0','A4','H7', 'h7', 'B6','Fis7', 'Cm', 'Am7', 'D4', 'a2', 'G0', 'Fmaj7','Cadd9','E7+', 'a', 'Bbm', 'F#m']
+    #chords = ['a0', 'G0', 'Am7b5', 'A7/4','(Am)', 'Emadd9', 'Cmaj7(#11)']
 
     for crd in chords:
         c = Chord(crd)

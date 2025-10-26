@@ -9,10 +9,15 @@ from bs4.element import ContentMetaAttributeValue, NavigableString, Tag
 
 from string import Template
 
-from src.chord import Chord
-from src.examples import Example
-from src.regex_patterns import *
- 
+try: 
+    from src.chord import Chord
+    from src.examples import Example
+    from src.regex_patterns import *
+
+except ModuleNotFoundError:
+    from chord import Chord
+    from examples import Example
+    from regex_patterns import *
 
 class Song:
     ''' class to manipulate (read/convert) various song/chords formats
@@ -20,8 +25,8 @@ class Song:
         0 - Ultimate Guitar
         1 - ChordPro
         2 - LaTeX ('Leadsheets' package, not 'Songs' !!)
-        3 - .sng (Proprietary format used in Hawiarska Koliba songbook)
-        4 - (in future, not yet) - LaTeX (Songs Package)
+        3 - (in future, not yet) - LaTeX (Songs Package)
+        4 - .sng (Proprietary format used in Hawiarska Koliba songbook)
     '''
     frets = [None,'I','II','III','IV','V','VI','VII','VIII','IX','X','XI']
     
@@ -57,18 +62,22 @@ class Song:
             self._read_wywrota()
         
         else:
-            pass       
+            pass
 
     def _read_ug(self):
         self.song_body = []
         env='default'
+        Line = namedtuple('Line', ['mode', 'linemarker', 'lyrics', 'chords', 'pos_crd_pairs','chords_above'], defaults=(None,None,None,None,None,None))
+        linedata = Line()
+        LineMarker = namedtuple('LineMarker', ['firstline', 'lastline'], defaults=(False, False))
+        lm = LineMarker()
+
         for line in self.raw_text:
             if line.strip():
                 if re.match(REGEX_UG_ENVIRONMENTS, line):
                     env = re.match(REGEX_UG_ENVIRONMENTS,line)[1].lower()
                     next_line_is_first_of_env = True
 
-                
                 elif re.findall(REGEX_UG_CHORD, line):
                     matches  = REGEX_UG_CHORD.finditer(line)
                     line_chords = [Chord(txt=crd.group(0), input_mode='english') for crd in matches]
@@ -81,20 +90,34 @@ class Song:
                         #corr_factor += len(m.group(0))
 
                 else:
-                    line_data = {'mode':env, 'lyrics':line.lstrip(), 'chords': line_chords, 'pos_crd_pairs': pairs}
+
+                    line_data = {'mode':env, 'lyrics':self.remove_double_spaces(line.lstrip()), 'chords': line_chords, 'pos_crd_pairs': pairs}
                     if next_line_is_first_of_env:
                         line_data['is_first'] = True
+                        lm = lm._replace(firstline=True)
                         next_line_is_first_of_env = False
                     else:
                         line_data['is_first'] = False
+                        lm = lm._replace(firstline=False)
+
+                    line_data.update(mode=env, lyrics=self.remove_double_spaces(line.lstrip()), chords=line_chords, pos_crd_pairs=pairs, linemarker=lm, chords_above=True)
                     
                     self.song_body.append(line_data)
 
     def _read_chopro(self):
+
         self.song_body = []
-        env='default'
+        LineMarker = namedtuple('LineMarker', ['firstline', 'lastline'], defaults=(False, False))
+        Line = namedtuple('Line', ['mode', 'linemarker', 'lyrics', 'chords', 'pos_crd_pairs','chords_above'], defaults=(None,None,None,None,None,None))
+        linedata = Line()
+        env = 'default'
+        chords = []
+        lm = LineMarker() # reset line marker
+
         for line in self.raw_text:
-            if line.strip():
+            line_data = dict()
+            line = line.strip()
+            if line:
                 if re.match(REGEX_CHOPRO_META, line):
                     meta = re.match(REGEX_CHOPRO_META, line)
                     
@@ -113,28 +136,53 @@ class Song:
 
                     if env_match[2] in ['start', 's']:
                         env = env_name
+                        lm = lm._replace(firstline=True)
+
+                    elif  env_match[2] in ['end','e']:
+                        env = 'default'
+                        lm = lm._replace(lastline=True)
+
+                        if self.song_body[-1].get('linemarker',False).firstline:
+                            lm = lm._replace(firstline=True)
+
+                        self.song_body[-1].update(linemarker=lm)
+
+                        lm = lm._replace(firstline=False)
+                        lm = lm._replace(lastline=False)
+
                     else:
                         env = 'default'
 
                 else:
 
+                    pairs = []
                     if re.findall(REGEX_CHOPRO_CHORD, line):
-                        pairs = []
                         corr_factor = 0
                         for idx, m in enumerate(re.finditer(REGEX_CHOPRO_CHORD, line)):
-                            pairs.append((m.start() - corr_factor + idx, Chord(txt=m.group(1), input_mode='english')))
+                            pairs.append((m.start() - corr_factor + idx, Chord(txt=m.group(1))))
                             corr_factor += len(m.group(0))
 
                         chords = re.findall(REGEX_CHOPRO_CHORD, line)
-                        chords = [Chord(txt=c, input_mode='english') for c in chords]
-
+                        chords = [Chord(txt=c) for c in chords]
+                   
                     lyrics = re.sub(REGEX_CHOPRO_CHORD, '', line).strip()
 
                     #chords = ' '.join(chords)
-                    line_data = {'mode': env, 'lyrics': lyrics, 'chords': chords, 'pos_crd_pairs': pairs}
-                    self.song_body.append(line_data)
-                    chords, lyrics, pairs = '','',''
 
+                    # line_data = {'mode': env, 'lyrics': lyrics, 'chords': chords, 'pos_crd_pairs': pairs}
+                    # ------------------------------------------------------
+                    line_chords_above = False # chords aside static (temp-dev solution)
+                    line_data.update(mode=env, lyrics=lyrics, chords=chords, pos_crd_pairs=pairs, linemarker=lm, chords_above=line_chords_above)
+                    # ------------------------------------------------------
+
+                    self.song_body.append(line_data)
+                    
+                    # Reset vars
+                    chords, lyrics, pairs = '','',''
+                    lm = lm._replace(firstline=False, lastline=False)
+
+                    # chords, lyrics, pairs = '','',''
+                    
     def _read_latex_leadsheets(self):
         ''' read LaTeX (leadsheets) formated text and cast 
         self.song_lines'''
@@ -144,6 +192,7 @@ class Song:
         linedata = Line()
         env = 'default'
         chords = []
+        pairs=[]
         lm = LineMarker() # reset line marker
 
         for i,line in enumerate(self.raw_text):
@@ -221,7 +270,11 @@ class Song:
 
     def _read_koliba(self):
         self.song_body = []
-        env = 'default'
+
+        Line = namedtuple('Line', ['mode', 'linemarker', 'lyrics', 'chords', 'pos_crd_pairs','chords_above'], defaults=(None,None,None,None,None,None))
+        linedata = Line()
+        LineMarker = namedtuple('LineMarker', ['firstline', 'lastline'], defaults=(False, False))
+        lm = LineMarker()
         for line in self.raw_text:
             line = line.strip()
             if line:
@@ -230,8 +283,12 @@ class Song:
                     value = re.match(REGEX_KOLIBA_META, line)[2].strip()
                     if tag == 'capo':
                         value = self.roman2int(re.sub(r'Capo\s?', '', value).strip())
-                    tag = 'band' if tag == 'author' else tag
-                    setattr(self, tag, value)
+                    
+                    if tag == 'author':
+                        setattr(self, 'band', value)
+                        setattr(self, 'artist', value)
+                    else: 
+                        setattr(self, tag, value)
                 
                 elif  re.match(REGEX_KOLIBA_ENVIRONMENTS, line):
                     env = re.match(REGEX_KOLIBA_ENVIRONMENTS, line)[1].lower()
@@ -245,19 +302,28 @@ class Song:
                         lyrics = self.remove_double_spaces(lyrics)
                         
                         #create Chord objects
-                        chords = [Chord(txt=c, input_mode='german') for c in chords]
-
-                        pairs = [(-1, crd) for crd in chords]
+                        line_chords = [Chord(txt=c, input_mode='german') for c in chords]
+                        pairs = [(-1, crd) for crd in line_chords]
                         
                     else: #no chords, only lyrics
-                        chords = ''
+                        line_chords = ''
                         pairs = ''
                         lyrics = line.strip()
-                
-                    line_data = {'mode':env, 'lyrics':lyrics, 'chords': chords, 'pos_crd_pairs': pairs}
-                
-                    self.song_body.append(line_data)
 
+                    line_data = {'mode':env, 'lyrics':lyrics, 'chords': chords, 'pos_crd_pairs': pairs}
+
+                    if next_line_is_first_of_env:
+                        line_data['is_first'] = True
+                        lm = lm._replace(firstline=True)
+                        next_line_is_first_of_env = False
+                    else:
+                        line_data['is_first'] = False
+                        lm = lm._replace(firstline=False)
+
+                    line_data.update(mode=env, lyrics=lyrics, chords=line_chords, pos_crd_pairs=pairs, linemarker=lm, chords_above=False)
+                    
+                    self.song_body.append(line_data)
+                
     def _read_wywrota(self):
         self.song_body = []
 
@@ -329,7 +395,8 @@ class Song:
             line['mode'] = 'verse' if line['mode'] == 'intro' else line['mode']
 
             if line['mode'] != 'default':
-                if prev_mode != line['mode']:
+                # if prev_mode != line['mode']:
+                if line['linemarker'].firstline:
                     if prev_mode != 'default':
                         txt += TEMPLATE_ENV_END.safe_substitute(env=prev_mode)
                     
@@ -373,7 +440,9 @@ class Song:
             line['pos_crd_pairs'] = [(pcp[0], pcp[1]._to_tex()) for pcp in line['pos_crd_pairs']]
             
             line['mode'] = 'tabs' if line['mode'] == 'tab' else line['mode']
-            if prev_mode != line['mode']:
+            # if prev_mode != line['mode']:
+            if line['linemarker'].firstline:
+            # if line['is_first']:
                 if prev_mode != 'default':
                     txt += TEMPLATE_ENV_END.safe_substitute(env=prev_mode)
                 
@@ -385,11 +454,11 @@ class Song:
             
             if chords_above:
                 txt += self.merge_chords_and_lyrics(lyricsline=line['lyrics'],pairs=line['pos_crd_pairs'], chord_format='leadsheets_above')
-                txt += '\\\\\n'
+                txt += ' \\\\\n'
             else:
                 
                 txt += f'{line["lyrics"]}'
-                txt += f' \\tab{crds}\\\\\n' if crds.strip() else f' \\\\\n' 
+                txt += f' \\tab{crds} \\\\\n' if crds.strip() else f' \\\\\n' 
 
 
         txt += TEMPLATE_ENV_END.safe_substitute(env=prev_mode)
@@ -584,12 +653,21 @@ def dev_slashes():
     song=Song(raw_text=data, input_format=4)
     txt = song.convert(to_format=2)
 
+def test_ug():
+    with open(file='D:/00_CLOUD/Dropbox/99.TEMP_non_public/PROGRAMMING/python/projects/ChordsConverter/dev/do_lata_ug.txt') as f:
+        data = f.read()
+        song = Song(raw_text=data, input_format=0)
+        from pprint import pprint
+        pprint(song.song_body)
 
 if __name__ == '__main__':
-    dev_slashes()
-
-
-
+    import os
+    # print(os.getcwd())
+    #test_ug()
+    e = Example().chopro_test
+    s = Song(raw_text=e, input_format=1)
+    converted = s._to_leadsheets()
+    print(converted)
 # --------- TO DO/FIX -----------------------
     # _read_wywrota(self) - does not conider last line
     # _read_wywrota(self) - 

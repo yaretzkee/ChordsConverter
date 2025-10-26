@@ -98,13 +98,17 @@ QPushButton::checked{
     </sizepolicy>
    </property>
    <layout class="QGridLayout" name="gridLayout_3">
-    <item row="1" column="0">
-     <widget class="QComboBox" name="cbx_input_format">
-      <property name="font">
-       <font>
-        <pointsize>14</pointsize>
-       </font>
+    <item row="1" column="0" colspan="3">
+     <widget class="QSplitter" name="splitter_comboboxes">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
+      <widget class="QComboBox" name="cbx_input_format">
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
       <property name="iconSize">
        <size>
         <width>32</width>
@@ -172,15 +176,86 @@ QPushButton::checked{
        </property>
       </item>
      </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QPlainTextEdit" name="text_in">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+     <widget class="QComboBox" name="cbx_output_format">
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
       </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="frame">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string>Ultimate Guitars</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/examples/application-ug.png</normalon>
+        </iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ChordPro</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/examples/application-chopro.png</normalon>
+        </iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>LaTeX (leadsheets)</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/examples/application-x-tex.png</normalon>
+        </iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>LaTeX (sOngs)</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/examples/application-x-tex.png</normalon>
+        </iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>&quot;Koliba&quot;</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/examples/application-hk.png</normalon>
+        </iconset>
+       </property>
+      </item>
+     </widget>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="3">
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QPlainTextEdit" name="text_in">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
       <property name="palette">
        <palette>
         <active>
@@ -762,8 +837,6 @@ QPushButton::checked{
        <font/>
       </property>
      </widget>
-    </item>
-    <item row="5" column="2">
      <widget class="QPlainTextEdit" name="text_out">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1352,23 +1425,36 @@ QPushButton::checked{
        <bool>false</bool>
       </property>
      </widget>
+     </widget>
     </item>
-    <item row="2" column="2" alignment="Qt::AlignLeft">
-     <widget class="QPushButton" name="btn_chords_above">
-      <property name="palette">
-       <palette>
-        <active>
-         <colorrole role="WindowText">
-          <brush brushstyle="SolidPattern">
-           <color alpha="255">
-            <red>0</red>
-            <green>0</green>
-            <blue>0</blue>
-           </color>
-          </brush>
-         </colorrole>
-         <colorrole role="Button">
-          <brush brushstyle="SolidPattern">
+    <item row="2" column="0" colspan="3">
+     <widget class="QSplitter" name="splitter_row2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QLineEdit" name="le_URL">
+       <property name="placeholderText">
+        <string>https://spiewnik.wywrota.pl/</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_chords_above">
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="WindowText">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>0</red>
+             <green>0</green>
+             <blue>0</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
            <color alpha="0">
             <red>65</red>
             <green>66</green>
@@ -1962,83 +2048,6 @@ QPushButton::checked{
        <bool>true</bool>
       </property>
      </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QComboBox" name="cbx_output_format">
-      <property name="font">
-       <font>
-        <pointsize>14</pointsize>
-       </font>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="frame">
-       <bool>true</bool>
-      </property>
-      <item>
-       <property name="text">
-        <string>Ultimate Guitars</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normalon>:/examples/application-ug.png</normalon>
-        </iconset>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>ChordPro</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normalon>:/examples/application-chopro.png</normalon>
-        </iconset>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>LaTeX (leadsheets)</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normalon>:/examples/application-x-tex.png</normalon>
-        </iconset>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>LaTeX (sOngs)</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normalon>:/examples/application-x-tex.png</normalon>
-        </iconset>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>&quot;Koliba&quot;</string>
-       </property>
-       <property name="icon">
-        <iconset>
-         <normalon>:/examples/application-hk.png</normalon>
-        </iconset>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLineEdit" name="le_URL">
-      <property name="placeholderText">
-       <string>https://spiewnik.wywrota.pl/</string>
-      </property>
-      <property name="clearButtonEnabled">
-       <bool>true</bool>
-      </property>
      </widget>
     </item>
    </layout>
@@ -2081,28 +2090,43 @@ QPushButton::checked{
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
-   <widget class="QMenu" name="menuHelp">
-    <property name="title">
-     <string>Help</string>
-    </property>
-    <addaction name="actionAbout"/>
-   </widget>
    <widget class="QMenu" name="menuConvert">
     <property name="title">
      <string>Convert</string>
     </property>
     <addaction name="actionConvert"/>
    </widget>
-   <widget class="QMenu" name="menuToolbars">
+   <widget class="QMenu" name="menuSettings">
     <property name="title">
-     <string>Toolbars</string>
+     <string>Settings</string>
     </property>
-    <addaction name="actionActions"/>
-    <addaction name="actionExaples"/>
+    <widget class="QMenu" name="menuToolbars">
+     <property name="title">
+      <string>Toolbars</string>
+     </property>
+     <addaction name="actionActions"/>
+     <addaction name="actionExaples"/>
+    </widget>
+    <widget class="QMenu" name="menuTheme">
+     <property name="title">
+      <string>Theme</string>
+     </property>
+     <addaction name="actionTheme_Light"/>
+     <addaction name="actionTheme_Dark"/>
+     <addaction name="actionTheme_OS"/>
+    </widget>
+    <addaction name="menuToolbars"/>
+    <addaction name="menuTheme"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConvert"/>
-   <addaction name="menuToolbars"/>
+   <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
@@ -2883,6 +2907,33 @@ QPushButton::checked{
    </property>
    <property name="text">
     <string>Wywrota</string>
+   </property>
+  </action>
+  <action name="actionTheme_Light">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Light</string>
+   </property>
+  </action>
+  <action name="actionTheme_Dark">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dark</string>
+   </property>
+  </action>
+  <action name="actionTheme_OS">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>OS Preferred</string>
    </property>
   </action>
  </widget>

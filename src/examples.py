@@ -213,6 +213,42 @@ A|-0-------------|---0-----------|---0------------|---0------------||
 E|---------------|-3-------------|-2--------------|-1----1---------||
 {eot}
 '''
+        self.chopro_test = r'''{artist: Ryczące Dwudziestki}
+{title: FEW DAYS}
+{capo: 2}
+{start_of_verse}
+O Panie czemu w ziemi tkwię [D] [A] [D]
+Hej raz, hej raz [D] [G]
+I macham szuflą cały dzień [D] [A] [D]
+Hej na morze czas [h] [Fis] [h] [A]
+{end_of_verse}
+{start_of_chorus}
+Mogę kopać tu dalej [D] [A] [h]
+Few days, few days [D] [G]
+Mogę kopać przez dni parę [D] [A] [h]
+Ale wracać chcę [D] [A] [G]
+{end_of_chorus}
+Tam każdy takie bajdy plótł 
+Nie raz, nie raz
+Przekroczysz Jukon złota w bród
+Hej na morze czas
+Wykopię jeszcze parę dziur 
+Hej raz, hej raz
+Wytoczę płonnej skały wór
+Hej na morze czas
+Za żonę tu łopatę mam 
+Już dość, już dość
+A zysk że jej używam sam
+Hej na morze czas
+O Panie, nie jest to twój raj
+O nie, o nie
+Nadzieję innym głupcom daj
+Ja na morze chcę
+Chociaż już mi wystarczy
+Już dość, już dość
+Dam Ci jeszcze jedną szansę
+Potem wracać chcę
+{end_of_verse}'''
 
     def frm(self, idx):
         return [self.ug, self.chopro, self.latex_leadsheets, self.latex_songs, self.hk][idx]

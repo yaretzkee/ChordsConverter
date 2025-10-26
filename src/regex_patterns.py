@@ -26,3 +26,5 @@ REGEX_KOLIBA_CHORDS = re.compile(r'^(.*?)~(.*?)$')
 
 # used in  Chord class to decompose chord for further processing
 REGEX_CHORD = re.compile(r'\(?([a-hA-H]{1})([ie]?s|\#|b)?(?!us)(mi?)?(?!aj)(\d)?(\/\d\-?)?(\+|\-|sus|aug|maj|dim|add)?(\d)?([\\\/][A-H]{1})?\)?')
+# REGEX_NAKED_CHORD = re.compile(r'(?<!\S|^)[A-Ha-h]{1}(is|es)?([024679])?(\/\d)?(\+)?(?![A-Za-z])((?!(\s[I-Zi-z]{2,}){2,}))')
+# REGEX_NAKED_CHORD_CORRECT_SPOJNIKI = re.compile(r'(\[[a-z0-9]*?\])(?!\s\[.*?\])(?!$)')  
